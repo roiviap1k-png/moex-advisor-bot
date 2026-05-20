@@ -5,25 +5,34 @@ from telegram.ext import (
     ContextTypes
 )
 
-TOKEN = "СЮДА_ПОТОМ_ВСТАВИМ_ТОКЕН"
+import os
+
+TOKEN = os.getenv("BOT_TOKEN")
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "MOEX Advisor запущен.\n\n"
+
+    text = (
+        "MOEX Advisor\n\n"
         "Команды:\n"
         "/рынок\n"
         "/анализ SBER"
     )
 
-async def market(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(text)
+
+
+async def market(update: Update, context):
+
     await update.message.reply_text(
-        "Рынок РФ\n\n"
-        "Модуль аналитики подключим дальше."
+        "Российский рынок анализируется."
     )
 
-async def analyse(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def analyse(update: Update, context):
 
     if not context.args:
+
         await update.message.reply_text(
             "Пример:\n/анализ SBER"
         )
@@ -33,27 +42,40 @@ async def analyse(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = (
         f"{ticker}\n\n"
-        "Тренд: анализируется\n"
-        "Риск: анализируется\n\n"
+        "Статус: модуль аналитики скоро подключим.\n\n"
         "Материал носит информационно-аналитический "
-        "характер и не является "
-        "индивидуальной инвестиционной рекомендацией."
+        "характер и не является индивидуальной "
+        "инвестиционной рекомендацией."
     )
 
     await update.message.reply_text(text)
 
-app = ApplicationBuilder().token(TOKEN).build()
 
-app.add_handler(
-    CommandHandler("start", start)
+app = (
+    ApplicationBuilder()
+    .token(TOKEN)
+    .build()
 )
 
 app.add_handler(
-    CommandHandler("рынок", market)
+    CommandHandler(
+        "start",
+        start
+    )
 )
 
 app.add_handler(
-    CommandHandler("анализ", analyse)
+    CommandHandler(
+        "рынок",
+        market
+    )
+)
+
+app.add_handler(
+    CommandHandler(
+        "анализ",
+        analyse
+    )
 )
 
 app.run_polling()
